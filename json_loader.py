@@ -13,10 +13,15 @@ def hash_i(password):
 
 #? Storing data
 def store_data(username, password):
-    new_data = {
-        "name": username,
-        "password": hash_i(password)
-    }
+    
+    try:
+
+        with open(human_data_file, 'r') as file:
+            new_data = json.load(file)
+    except:
+        new_data = {}
+
+    new_data[username] = hash_i(password)
 
     with open(human_data_file, 'w') as file:
         json.dump(new_data, file)
@@ -34,7 +39,7 @@ option = input("Are you new here (y/n): ")
 if option == 'y':
     name = input("Enter new username: ")
 
-    password = getpass.getpass("Enter new password: ")
+    password = getpass.getpass(prompt="Enter new password: ")
 
     store_data(name, password)
 
@@ -44,11 +49,11 @@ else:
     data = load_data()
 
     if data:
-        print(data["name"], "is registered. Please enter password for it.")
+        check_name = input("Enter username: ")
 
-        check_password = getpass.getpass("Enter password: ")
+        check_password = getpass.getpass(prompt="Enter password: ")
 
-        if hash_i(check_password) == data["password"]:
+        if hash_i(check_password) == data[check_name]:
             print("Password correct!\nSuccessfully signed in.")
 
             signed = True
@@ -57,5 +62,5 @@ else:
             print("Incorrect password!")
 
     else:
-        print("No User is registered!")
+        print("No users are registered!")
 
